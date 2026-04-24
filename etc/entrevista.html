@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Teleprompter - João Vitor</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-size: 28px;
+      line-height: 1.8;
+      text-align: center;
+      margin: 0;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
+    .container {
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+    .scroll {
+      position: absolute;
+      top: 100%;
+      white-space: pre-wrap;
+      padding: 0 50px;
+    }
+    .controls {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.7);
+      padding: 10px;
+      border-radius: 8px;
+      z-index: 10;
+    }
+    .controls button,
+    .controls input[type="range"] {
+      margin: 5px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="controls">
+    <button onclick="play()">▶️ Play</button>
+    <button onclick="pause()">⏸ Pausar</button>
+    <button onclick="rewind()">⏪ Retroceder</button>
+    <button onclick="forward()">⏩ Avançar</button><br>
+    Velocidade:
+    <input type="range" id="speed" min="0.5" max="3" step="0.1" value="1">
+    <span id="speedValue">1x</span>
+  </div>
+
+  <div class="container">
+    <div class="scroll" id="scrollText">
+Eu, João Vitor Pires Leite, autorizo o armazenamento deste vídeo durante o processo seletivo da vaga para que minha aplicação possa ser analisada.
+
+Primeiramente, vocês já devem ter observado que este vídeo está com mais tempo do que foi solicitado por vocês . Porém posso garantir que valerá a pena assistirem até o final, pois eu sou o candidato ideal para esta vaga.
+
+Serei o mais breve possível na minha apresentação, mas acho extremamente necessário explicar por que eu sou o candidato ideal:
+Assim como muitos, sou apaixonado por tecnologia. Mas o que realmente me move é minha família e meus animais de estimação. Foi por causa disto que escolhi a veterinária como minha primeira faculdade. Nessa área foi onde me desenvolvi muito: tanto pessoalmente quanto profissionalmente.
+
+Aprendi a trabalhar em equipe, a lidar com pessoas em diferentes situações, e até mesmo a trabalhar sob pressão. Mas infelizmente, só amor não paga as contas. Eu queria crescer mais do que a área me permitia. Foi então que me decidi a mergulhar na area da tecnologia como uma nova possibilidade — uma forma de evoluir, crescer e alcançar o que eu realmente almejo.
+
+Assim como um professor e empressario e escritor como o Ezequiel, que tem uma visão de negócios, eu também tenho visão de onde quero chegar. E sei que para isto, preciso passar por um processo de aprendizado . É por isso que acredito que sou a melhor escolha para essa vaga. 
+
+Como estagiário, posso garantir que meu comprometimento será o máximo possível. Entendo que uma empresa como a de vocês que abre está oportunidade de aprendizado    também querem que eu contribua. E esse é, com certeza, o meu maior desejo.
+
+Bom Agora, respondendo às perguntas do formulário:
+
+1. **primeira pergunta?**  
+Apesar de essa não ser minha primeira área, hoje estou totalmente focado na transição. Sei que durante a faculdade e nas experiências de estágio a gente vai se adaptando, entendendo melhor onde se encaixa. Mas, se eu pudesse escolher hoje, eu tenho muito interesse na área de **cybersegurança**.
+
+2. **segunda pergunta?**  
+Bom Organização para mim é fundamental. Me traz paz. Quando estou com minhas tarefas organizadas, eu sinto que estou no controle, cumprindo  literalmente metas.  
+Sou muito visual: gosto de listas, , checklists — tudo de fácil acesso pra me ajudar a lembrar das prioridades. Organização pra mim não é só uma habilidade, é parte de como eu funciono melhor no meu dia a dia.
+
+3. **terceira pergunta **  
+Acredito que me comunico relativamente muito bem — e gosto disso. Tenho prazer em conversar, principalmente para aprender ou compartilhar o que sei.  
+Busco manter o clima leve, respeitoso e produtivo.  
+Já trabalhei na área da saúde, onde a comunicação é bem delicada, e isso me deu sensibilidade pra lidar com diferentes perfis. Tenho jogo de cintura e consigo me adaptar a diferentes contextos.
+
+4. **quarta pergunta?**  
+ gosto de planejar como as coisas vão ser feitas, organizar, delegar e executar. Se alguém não está entregando num trabalho de faculdade por exemplo, eu cobro, claro, de forma respeitosa e no ambiente adequado. Mas também não deixo de fazer oque deve ser entregue. Prefiro garantir que o trabalho seja bem feito, mesmo que isso signifique assumir mais responsabilidades.
+
+5. **quinta pergunta**  
+Mesmo não tendo experiência direta com a função, acredito que organização é o pilar principal. Um bom gerente precisa planejar, delegar bem,  saber oque priorizar e manter a equipe alinhada. No fim, é isso que garante eficiência e bons resultados.
+
+Muito obrigado pelo tempo de vocês.
+    </div>
+  </div>
+
+  <script>
+    const scrollText = document.getElementById("scrollText");
+    const speedSlider = document.getElementById("speed");
+    const speedValue = document.getElementById("speedValue");
+    let interval;
+    let speed = parseFloat(speedSlider.value);
+    let position = 0;
+
+    function updateSpeed() {
+      speed = parseFloat(speedSlider.value);
+      speedValue.textContent = speed + "x";
+    }
+
+    function scrollStep() {
+      position -= speed;
+      scrollText.style.top = position + "px";
+    }
+
+    function play() {
+      clearInterval(interval);
+      interval = setInterval(scrollStep, 50);
+    }
+
+    function pause() {
+      clearInterval(interval);
+    }
+
+    function rewind() {
+      position += 100;
+      scrollText.style.top = position + "px";
+    }
+
+    function forward() {
+      position -= 100;
+      scrollText.style.top = position + "px";
+    }
+
+    speedSlider.addEventListener("input", () => {
+      updateSpeed();
+    });
+
+    updateSpeed(); // Inicializa o valor
+  </script>
+</body>
+</html>

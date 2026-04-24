@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Portfólio  - João Vitor Pires Leite (Zero-0Dev)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --main-bg: #1a1a1a;
+      --card-bg: #232323;
+      --accent: #355c7d;
+      --accent-light: #bfa46f99;
+      --text: #f2f2f2;
+      --subtext: #b3b3b3;
+      --border: #282828;
+      --shadow: 0 6px 32px #0008;
+    }
+    body {
+      background: var(--main-bg);
+      color: var(--text);
+      font-family: 'Montserrat', Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      background-image: radial-gradient(circle at 80% 10%, #bfa46f15 0%, #1a1a1a 100%);
+      letter-spacing: 0.02em;
+    }
+    header {
+      text-align: center;
+      padding: 2.5rem 1rem 1.5rem;
+      background: linear-gradient(90deg, #1a1a1a 60%, #bfa46f15 100%);
+      border-bottom: 1.5px solid var(--border);
+      box-shadow: 0 4px 18px #bfa46f22;
+    }
+    h1 {
+      font-size: 2.3rem;
+      margin: 0 0 .4em 0;
+      font-weight: 800;
+      letter-spacing: .04em;
+      color: var(--accent);
+      text-shadow: 0 2px 8px #355c7d1a;
+    }
+    .badge {
+      display: inline-block;
+      padding: .3em 1em;
+      background: var(--accent-light);
+      color: var(--accent);
+      border-radius: 30px;
+      font-size: .95em;
+      letter-spacing: .1em;
+      font-weight: 600;
+      margin-bottom: 1.1em;
+      box-shadow: 0 2px 10px #bfa46f33;
+      user-select: none;
+    }
+    header p {
+      color: var(--subtext);
+      font-size: 1.1rem;
+      max-width: 500px;
+      margin: 0 auto;
+      text-shadow: 0 1px 3px #0002;
+    }
+    main {
+      max-width: 700px;
+      margin: 2.5rem auto;
+      background: var(--card-bg);
+      border-radius: 1.5rem;
+      box-shadow: var(--shadow);
+      padding: 2.5rem 1.5rem 2rem;
+      border: 1.5px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .profile-info {
+      width: 100%;
+      margin-bottom: 2rem;
+      text-align: left;
+    }
+    .profile-info h2 {
+      margin-bottom: 0.2em;
+      color: var(--accent);
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: .03em;
+    }
+    .profile-info p {
+      margin: .3em 0;
+      color: var(--subtext);
+      font-size: 1.06rem;
+      line-height: 1.6;
+    }
+    .tabs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      flex: none;
+      padding: .65rem 1.3rem;
+      background: var(--accent-light);
+      color: var(--accent);
+      border: none;
+      border-radius: 1em 1em 0 0;
+      font-weight: 600;
+      font-size: 1.07rem;
+      letter-spacing: .03em;
+      cursor: pointer;
+      margin-bottom: -0.3rem;
+      transition: background .18s, color .18s;
+      outline: none;
+      box-shadow: 0 2px 10px #bfa46f33;
+    }
+    .tab-btn.active,
+    .tab-btn:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    .tab-content {
+      display: none;
+      background: var(--card-bg);
+      border-radius: 0 1em 1em 1em;
+      padding: 1.3em 1.3em 1em 1.3em;
+      border: 1.2px solid var(--border);
+      box-shadow: 0 4px 18px #bfa46f1a;
+      margin-bottom: 1.4em;
+      position: relative;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .links {
+      margin-top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.3rem;
+      align-items: flex-start;
+    }
+    .links a {
+      display: inline-block;
+      text-decoration: none;
+      background: linear-gradient(90deg, var(--accent), var(--accent-light));
+      color: #fff;
+      font-weight: 700;
+      padding: 1rem 1.8rem;
+      font-size: 1.13rem;
+      border-radius: .9rem;
+      letter-spacing: .04em;
+      box-shadow: 0 2px 12px #bfa46f40;
+      border: none;
+      transition: background .2s, color .2s, box-shadow .2s;
+    }
+    .links a:hover {
+      background: linear-gradient(90deg, #bfa46f 20%, #355c7d 100%);
+      color: #232323;
+      box-shadow: 0 4px 18px #bfa46f99;
+      text-shadow: 0 1px 8px #355c7d3a;
+      transform: translateY(-2px) scale(1.04);
+    }
+    .contact {
+      margin-top: 0.5rem;
+      font-size: 1.08em;
+      color: var(--subtext);
+    }
+    .contact strong {
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .contact a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+      margin-left: 0.4em;
+      transition: color .18s;
+    }
+    .contact a:hover {
+      color: var(--accent-light);
+      text-decoration: underline;
+    }
+    .resume-contact {
+      margin-top: 1.8em;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: .5em;
+    }
+    .resume-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .55em;
+      background: linear-gradient(90deg, var(--accent), var(--accent-light));
+      color: #fff;
+      font-weight: 700;
+      padding: .8em 1.6em;
+      font-size: 1.05rem;
+      border-radius: .9em;
+      letter-spacing: .04em;
+      box-shadow: 0 2px 12px #bfa46f40;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background .2s, color .2s, box-shadow .2s;
+      margin-top: 0.3em;
+    }
+    .resume-btn:hover {
+      background: linear-gradient(90deg, #bfa46f 20%, #355c7d 100%);
+      color: #232323;
+      box-shadow: 0 4px 18px #bfa46f99;
+      text-shadow: 0 1px 8px #355c7d3a;
+      transform: translateY(-2px) scale(1.04);
+    }
+    .resume-note {
+      font-size: .92em;
+      color: var(--subtext);
+      margin-top: .3em;
+      text-align: left;
+      font-style: italic;
+    }
+    .coming-soon {
+      font-size: 0.85em;
+      color: #b3b3b3cc;
+      margin-top: 1.8em;
+      text-align: right;
+      font-style: italic;
+    }
+    .coming-soon.center {
+      text-align: center;
+      margin-top: 2.2em;
+    }
+    .github-more {
+      font-size: 0.92em;
+      color: #b3b3b3;
+      text-align: right;
+      margin-top: 2.5em;
+      margin-right: 0.2em;
+      display: block;
+      font-style: italic;
+    }
+    .github-more a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color .18s;
+    }
+    .github-more a:hover {
+      color: var(--accent-light);
+      text-decoration: underline;
+    }
+    footer {
+      text-align: center;
+      color: #a88;
+      margin-top: 4rem;
+      font-size: .98rem;
+      opacity: .7;
+      padding-bottom: 2rem;
+    }
+    @media (max-width: 850px) {
+      main { max-width: 95vw; }
+      .profile-info { text-align: left; }
+    }
+    @media (max-width: 700px) {
+      main { padding: 1.3rem 0.8rem 1.1rem; }
+      h1 { font-size: 2rem; }
+      .links a, .resume-btn { padding: .8rem 1.2rem; font-size: 1rem;}
+      .tab-btn { font-size: 1rem; padding: .6rem 1rem;}
+      .github-more { text-align: left; }
+      .coming-soon { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="badge">Zero-0Dev</div>
+    <h1>Portfólio</h1>
+    <p>Bem-vindo ao meu espaço de experimentos, estudos e evolução digital.<br>
+    Explore cursos, exercícios, projetos pessoais e minha trajetória.</p>
+  </header>
+  <main>
+    <section class="profile-info">
+      <h2>João Vitor Pires Leite</h2>
+      <p>
+        Meu nome é <strong>João Vitor Pires Leite</strong>, também conhecido como <strong>Zero-0Dev</strong> ou <strong>Phill</strong>.
+      </p>
+    </section>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('contato')">Contato</button>
+      <button class="tab-btn" onclick="showTab('sobre')">Sobre mim</button>
+      <button class="tab-btn" onclick="showTab('cursos')">Cursos</button>
+      <button class="tab-btn" onclick="showTab('exercicios')">Exercícios</button>
+      <button class="tab-btn" onclick="showTab('projetos')">Projetos Pessoais</button>
+    </div>
+    <div id="contato" class="tab-content active">
+      <div class="contact">
+        <strong>Redes sociais:</strong><br>
+        <span>GitHub &#128049; <a href="https://github.com/Zero-0Dev" target="_blank">github.com/Zero-0Dev</a></span><br>
+        <span>Instagram &#128247; <a href="https://www.instagram.com/phill_dev_/" target="_blank">instagram.com/phill_dev_/</a></span><br>
+        <span>LinkedIn &#128188; <a href="https://www.linkedin.com/in/jo%C3%A3o-vitor-pires-14983b222/" target="_blank">linkedin.com/in/joao-vitor</a></span>
+      </div>
+      <div class="resume-contact">
+        <span class="resume-title">📄 Currículo</span>
+        <a class="resume-btn" href="Curriculo_Joao_Vitor_Pires_Leite.pdf" target="_blank" download>
+          Baixar Currículo
+        </a>
+        <div class="resume-note">
+          Clique para visualizar ou baixar meu currículo em PDF.
+        </div>
+      </div>
+      <div class="coming-soon">
+        <span>Novos conteúdos serão adicionados em breve! Estou dedicando todo o meu tempo para aprender mais.</span>
+      </div>
+    </div>
+    <div id="sobre" class="tab-content">
+      <strong>Minha história:</strong>
+      <p>
+        Sempre fui movido por desafios e mudanças. Antes de mergulhar no universo da tecnologia, fui veterinário. Foi nessa época que aprendi o peso das decisões rápidas, do autocontrole e da empatia: cada animal atendido representava um mundo para alguém.<br><br>
+        Em situações de pressão e escolhas difíceis, percebi que nós, humanos, também agimos por impulso – é instintivo, especialmente quando o emocional está envolvido. Compreender isso me ensinou a observar meus próprios impulsos e buscar equilíbrio. Aprendi, na prática, que mesmo diante de momentos críticos, como decisões de vida ou morte, é possível manter o foco e procurar a melhor opção possível. Ter vivenciado isso me fortaleceu e me deu confiança para agir com responsabilidade mesmo sob pressão – e hoje, é justamente essa pressão que me impulsiona.<br><br>
+        Mas, com o tempo, percebi que a veterinária tinha seus limites para o que eu sonhava. A tecnologia, por outro lado, me mostrou que o único limite é o quanto estou disposto a aprender e evoluir. Agora, cada linha de código, cada projeto e cada erro são parte do meu crescimento.<br><br>
+        Sigo estudando, criando, experimentando. Porque, no fim das contas, o importante é nunca parar de tentar.
+      </p>
+    </div>
+    <div id="cursos" class="tab-content">
+      <strong>Meus cursos e aprendizados:</strong>
+      <p>Veja os cursos que estou estudando ou já concluí:</p>
+      <div class="links">
+        <a href="cursos/" target="_blank">🌟 Acessar lista de Cursos</a>
+      </div>
+      <div class="coming-soon">
+        <span>Conteúdos serão adicionados em breve! No momento estou focado em estudar o máximo possível.</span>
+      </div>
+    </div>
+    <div id="exercicios" class="tab-content">
+      <strong>Exercícios e estudos:</strong>
+      <p>Aqui você encontra exercícios e práticas que desenvolvi ao longo dos estudos.</p>
+      <div class="links">
+        <a href="exercicios/" target="_blank">📝 Ver exercícios</a>
+      </div>
+      <div class="coming-soon">
+        <span>Em breve irei adicionar conteúdos! Estou dedicando todo o meu tempo para aprender mais.</span>
+      </div>
+    </div>
+    <div id="projetos" class="tab-content">
+      <strong>Projetos pessoais:</strong>
+      <p>Meus projetos próprios, ideias experimentais e códigos que refletem minha evolução.</p>
+      <div class="links">
+        <a href="roteiroCode.html" target="_blank">🗒️ Projeto de Roteiro de rotas</a>
+         <a href="roteiroCode.html" target="_blank">Código &lt;&gt;</a>
+        <!-- Caminho fixo para o GitHub Pages (funcionará após publicação) -->
+        <a href="roteiro.html" target="_blank">Site</a>
+      </div>
+      <span class="github-more">
+        Veja mais projetos no <a href="https://github.com/Zero-0Dev" target="_blank">GitHub</a>
+      </span>
+      <div class="coming-soon">
+        <span>Novos projetos serão adicionados em breve, conforme for evoluindo nos estudos!</span>
+      </div>
+    </div>
+    <script>
+      function showTab(tabId) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelector('.tab-btn[onclick*="' + tabId + '"]').classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+      }
+    </script>
+  </main>
+  <footer>
+    Feito por João Vitor Pires Leite — 2025
+  </footer>
+</body>
+</html>

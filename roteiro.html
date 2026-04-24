@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roteiro de Entregas </title>
+
+   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #000000;
+      color: #fff;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    input, button, select {
+      padding: 10px;
+      margin: 5px 0;
+      width: 100%;
+      box-sizing: border-box;
+      border-radius: 4px;
+    }
+    button {
+      background: #0b5f0e;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .input-group { 
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px; 
+    }
+    .input-group input[type="text"] {
+      flex-grow: 1; /
+      margin-right: 8px; 
+      margin-bottom: 0; 
+    }
+    #btnFalarEndereco {
+      width: auto; 
+      padding: 10px 15px;
+      background-color: #0b5f0e; 
+    }
+    #btnFalarEndereco.ouvindo {
+      background-color: #dc3a3a; 
+    }
+    #roteiro {
+      background: #1e1e1e;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 5px;
+      white-space: pre-wrap;
+      position: relative;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #fb7704;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #listaEnderecos div {
+      margin: 5px 0;
+      padding: 8px;
+      background: #333;
+      border-radius: 4px;
+    }
+    .remove-btn {
+      float: right;
+      background: #ff4444;
+      padding: 2px 8px;
+      border: none;
+      color: white;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+    .bloco-tabs { margin: 10px 0 0 0; }
+    .bloco-tabs button {
+      margin-right: 5px;
+      padding: 5px 10px;
+      background: #2196F3;
+      border-radius: 4px;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+    .bloco-tabs button.active { background: #4CAF50; }
+    .map-bloco { display: none; height: 400px; border-radius: 5px; background: #333; }
+    .map-bloco.active { display: block; }
+    #btnLimparEnderecos {
+      background: #ff9800;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    #btnAdicionarVarios {
+      background: #03a9f4;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    #importarVariosBox {
+      background: #232323;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    #importarVariosBox textarea {
+      width: 100%;
+      resize: vertical;
+      margin-bottom: 8px;
+      border-radius: 4px;
+      padding: 8px;
+      background: #2c2c2c;
+      color: #fff;
+      border: 1px solid #444;
+    }
+    #btnFecharImportarVarios {
+      margin-left: 5px;
+    }
+    select {
+      background: #333;
+      color: #fff;
+      border: 1px solid #444;
+    }
+    input[type="text"] { 
+      background: #333;
+      color: #fff;
+      border: 1px solid #444;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+
+    #mapaGeralLeafletContainer {
+        margin-bottom: 20px;
+        padding: 10px;
+        background: #1e1e1e;
+        border-radius: 5px;
+    }
+    #mapaGeralLeaflet {
+      height: 400px;
+      border-radius: 5px;
+      background: #2c2c2c;
+    }
+    #mapaGeralLeafletContainer h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        text-align: center;
+        color: #ccc;
+    }
+    .loading-map-geral {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        color: #aaa;
+        font-style: italic;
+    }
+
+    .custom-leaflet-div-icon {
+      background-color: #2196F3;
+      color: white;
+      border-radius: 50%;
+      text-align: center;
+      font-weight: bold;
+      font-size: 12px;
+      border: 2px solid white;
+      box-shadow: 0 0 3px rgba(0,0,0,0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+    .modal-content {
+      background: #282c34;
+      padding: 25px;
+      border-radius: 8px;
+      text-align: center;
+      color: #fff;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+      min-width: 320px;
+      max-width: 90%;
+    }
+    .modal-content p {
+      margin-bottom: 20px;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    .modal-buttons button {
+      padding: 10px 20px;
+      margin: 0 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.2s ease;
+    }
+    .modal-buttons button#customConfirmOk { background-color: #4CAF50; color: white; }
+    .modal-buttons button#customConfirmCancel { background-color: #f44336; color: white; }
+    .modal-buttons button#customAlertOk { background-color: #2196F3; color: white; }
+    .modal-buttons button:hover { opacity: 0.9; }
+
+  </style>
+</head>
+<body>
+  <h1>Roteiro de Entregas</h1>
+
+  <div id="mapaGeralLeafletContainer">
+    <h3>Visualização Geral de Todos os Pontos</h3>
+    <div id="mapaGeralLeaflet">
+        <div class="loading-map-geral">Carregando mapa geral...</div>
+    </div>
+  </div>
+
+  
+  <div class="input-group">
+    <input type="text" id="novoEndereco" placeholder="Ex: Rua Exemplo, 123 (Sua região será priorizada)">
+    <button id="btnFalarEndereco" title="Falar Endereço">🎤</button>
+  </div>
+  <button id="btnAdicionar">Adicionar Endereço</button>
+  <button id="btnAdicionarVarios">Adicionar Vários Endereços</button>
+  <button id="btnLimparEnderecos">Limpar Endereços</button>
+
+  <div id="importarVariosBox" style="display:none;margin:10px 0;">
+    <label for="enderecosVarios"><b>Cole a lista de endereços (<STRONG>UM POR LINHA</STRONG>):</b></label>
+    <textarea id="enderecosVarios" rows="6"></textarea>
+    <br>
+    <button id="btnImportarVarios">Importar</button>
+    <button id="btnFecharImportarVarios" style="background:#f44336;">Cancelar</button>
+  </div>
+
+  <label for="inicio">Endereço Inicial (opcional):</label>
+  <select id="inicio"></select>
+  <label for="fim">Endereço Final (opcional):</label>
+  <select id="fim"></select>
+
+  <div id="listaEnderecos"></div>
+
+  <button id="btnGerarRoteiro" style="background:#2196F3">Gerar Roteiro Google Maps</button>
+  <button id="btnLimparTudo" style="background:#f44336">Limpar Tudo</button>
+
+  <h3 style="margin-top:20px; margin-bottom:0px; color: #ccc;">Roteiro Detalhado por Blocos (Google Maps)</h3>
+  <div class="bloco-tabs" id="tabs"></div>
+  <div id="map-blocos"></div>
+  <div id="roteiro">
+    <button class="copy-btn" id="btnCopiar">Copiar Roteiro</button>
+    <div id="roteiroTexto"></div>
+  </div>
+
+  <div id="customConfirmModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content"> <p id="customConfirmMessage"></p> <div class="modal-buttons"> <button id="customConfirmOk">OK</button> <button id="customConfirmCancel">Cancelar</button> </div> </div>
+  </div>
+  <div id="customAlertModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content"> <p id="customAlertMessage"></p> <div class="modal-buttons"> <button id="customAlertOk">OK</button> </div> </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <script>
+    let enderecos = [];
+    let blocos = [];
+    let blocosResponses = [];
+    let currentBloco = 0;
+    const MAX_POR_BLOCO = 25;
+
+    let mapaLeafletGeral = null;
+    let marcadoresLeaflet = [];
+    let googleApiCarregada = false;
+    let geocodingEmProgresso = false;
+    let zonaSulBounds = null;
+
+    //  Voz
+    let speechRecognition = null;
+    let isRecognizing = false;
+
+
+    const dom = {
+      novoEndereco: document.getElementById("novoEndereco"),
+      btnAdicionar: document.getElementById("btnAdicionar"),
+      btnAdicionarVarios: document.getElementById("btnAdicionarVarios"),
+      btnLimparEnderecos: document.getElementById("btnLimparEnderecos"),
+      btnGerarRoteiro: document.getElementById("btnGerarRoteiro"),
+      btnLimparTudo: document.getElementById("btnLimparTudo"),
+      btnCopiar: document.getElementById("btnCopiar"),
+      listaEnderecos: document.getElementById("listaEnderecos"),
+      inicio: document.getElementById("inicio"),
+      fim: document.getElementById("fim"),
+      roteiroTexto: document.getElementById("roteiroTexto"),
+      tabs: document.getElementById("tabs"),
+      mapBlocos: document.getElementById("map-blocos"),
+      importarVariosBox: document.getElementById("importarVariosBox"),
+      enderecosVarios: document.getElementById("enderecosVarios"),
+      btnImportarVarios: document.getElementById("btnImportarVarios"),
+      btnFecharImportarVarios: document.getElementById("btnFecharImportarVarios"),
+      mapaGeralLeafletDiv: document.getElementById("mapaGeralLeaflet"),
+      customConfirmModal: document.getElementById('customConfirmModal'),
+      customConfirmMessage: document.getElementById('customConfirmMessage'),
+      customConfirmOk: document.getElementById('customConfirmOk'),
+      customConfirmCancel: document.getElementById('customConfirmCancel'),
+      customAlertModal: document.getElementById('customAlertModal'),
+      customAlertMessage: document.getElementById('customAlertMessage'),
+      customAlertOk: document.getElementById('customAlertOk'),
+      btnFalarEndereco: document.getElementById('btnFalarEndereco')
+    };
+
+    let confirmResolve = null;
+     function showCustomConfirm(message) {
+      return new Promise((resolve) => {
+        confirmResolve = resolve;
+        dom.customConfirmMessage.textContent = message;
+        dom.customConfirmModal.style.display = 'flex';
+      });
+    }
+    dom.customConfirmOk.addEventListener('click', () => {
+      if (confirmResolve) confirmResolve(true);
+      dom.customConfirmModal.style.display = 'none';
+    });
+    dom.customConfirmCancel.addEventListener('click', () => {
+      if (confirmResolve) confirmResolve(false);
+      dom.customConfirmModal.style.display = 'none';
+    });
+
+    function showCustomAlert(message) {
+      dom.customAlertMessage.textContent = message;
+      dom.customAlertModal.style.display = 'flex';
+    }
+    dom.customAlertOk.addEventListener('click', () => {
+      dom.customAlertModal.style.display = 'none';
+    });
+    function gerarNumeracaoEnderecos(lista) {
+      const baseNumeros = new Map();
+      let seq = 1;
+      for (const end of lista) {
+        if (!baseNumeros.has(end)) {
+          baseNumeros.set(end, seq++);
+        }
+      }
+      const contadores = {};
+      const numerados = [];
+      for (const end of lista) {
+        const base = baseNumeros.get(end);
+        contadores[base] = (contadores[base]||0) + 1;
+        numerados.push(contadores[base] === 1 ? `#${base}` : `#${base}.${contadores[base]-1}`);
+      }
+      return numerados;
+    }
+
+    function salvarNoLocalStorage() {
+      localStorage.setItem("enderecos", JSON.stringify(enderecos));
+    }
+    function carregarDoLocalStorage() {
+      const dados = localStorage.getItem("enderecos");
+      if (dados) {
+        enderecos = JSON.parse(dados);
+        atualizarLista();
+        atualizarSelects();
+        if (googleApiCarregada && mapaLeafletGeral) {
+            atualizarMapaGeralComTodosOsPontos();
+        }
+      }
+    }
+
+     function preprocessarEnderecoParaGeocoding(enderecoOriginal) {
+        let enderecoProcessado = enderecoOriginal.trim();
+        const pareceCurto = !enderecoProcessado.includes(',') && enderecoProcessado.length < 50;
+        const contemSP = /s(a|ã)o paulo/i.test(enderecoProcessado) || /\bsp\b/i.test(enderecoProcessado);
+
+        if (pareceCurto && !contemSP) {
+            enderecoProcessado += ", São Paulo, SP";
+        }
+        return enderecoProcessado;
+    }
+
+    function adicionarEndereco() {
+      const endereco = dom.novoEndereco.value.trim();
+      if (endereco) {
+        enderecos.push(endereco);
+        dom.novoEndereco.value = '';
+        atualizarLista();
+        atualizarSelects();
+        salvarNoLocalStorage();
+        atualizarMapaGeralComTodosOsPontos();
+      }
+    }
+
+    
+    function adicionarVariosEnderecos() {
+      dom.importarVariosBox.style.display = "block";
+      dom.enderecosVarios.value = "";
+      dom.enderecosVarios.focus();
+    }
+
+    function importarVariosEnderecos() {
+      const texto = dom.enderecosVarios.value;
+      if (!texto.trim()) return;
+      const lista = texto.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+      if (lista.length) {
+        enderecos.push(...lista);
+        atualizarLista();
+        atualizarSelects();
+        salvarNoLocalStorage();
+        dom.enderecosVarios.value = "";
+        dom.importarVariosBox.style.display = "none";
+        atualizarMapaGeralComTodosOsPontos();
+      }
+    }
+
+      function fecharImportarVarios() {
+      dom.enderecosVarios.value = "";
+      dom.importarVariosBox.style.display = "none";
+    }
+
+    function atualizarLista() {
+      const numeros = gerarNumeracaoEnderecos(enderecos);
+      dom.listaEnderecos.innerHTML = enderecos.map((end, i) =>
+        `<div>
+          ${numeros[i]}. ${end}
+          <button class="remove-btn" data-index="${i}">X</button>
+        </div>`
+      ).join('');
+      document.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+          await removerEndereco(parseInt(this.getAttribute('data-index')));
+        });
+      });
+    }
+
+        function atualizarSelects() {
+      const numeros = gerarNumeracaoEnderecos(enderecos);
+      dom.inicio.innerHTML = '<option value="-1">Automático</option>';
+      dom.fim.innerHTML = '<option value="-1">Automático</option>';
+      enderecos.forEach((end, i) => {
+        const opt1 = new Option(`${numeros[i]} - ${end}`, i);
+        const opt2 = new Option(`${numeros[i]} - ${end}`, i);
+        dom.inicio.add(opt1);
+        dom.fim.add(opt2);
+      });
+    }
+
+ 
+    async function removerEndereco(index) {
+      if (await showCustomConfirm("Remover este endereço?")) {
+        enderecos.splice(index, 1);
+        atualizarLista();
+        atualizarSelects();
+        salvarNoLocalStorage();
+        atualizarMapaGeralComTodosOsPontos();
+      }
+    }
+
+       async function limparEnderecos() {
+      if (enderecos.length === 0) return;
+      if (await showCustomConfirm("Limpar TODOS os endereços?")) {
+        enderecos = [];
+        atualizarLista();
+        atualizarSelects();
+        salvarNoLocalStorage();
+        atualizarMapaGeralComTodosOsPontos();
+      }
+    }
+    async function limparTudo() {
+      if (await showCustomConfirm("Limpar todos os endereços e o roteiro?")) {
+        enderecos = [];
+        dom.roteiroTexto.textContent = '';
+        localStorage.removeItem("enderecos");
+        atualizarLista();
+        atualizarSelects();
+        dom.tabs.innerHTML = '';
+        dom.mapBlocos.innerHTML = '';
+        blocos = [];
+        blocosResponses = [];
+        currentBloco = 0;
+        atualizarMapaGeralComTodosOsPontos();
+      }
+    }
+
+    function inicializarMapaLeaflet() {
+      if (mapaLeafletGeral || !dom.mapaGeralLeafletDiv) return;
+      dom.mapaGeralLeafletDiv.innerHTML = ''; 
+      mapaLeafletGeral = L.map(dom.mapaGeralLeafletDiv).setView([00.000000, -00.000000], 00); 
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 18,
+      }).addTo(mapaLeafletGeral);
+      if (googleApiCarregada && enderecos.length > 0) {
+          atualizarMapaGeralComTodosOsPontos();
+      }
+    }
+
+    
+    async function geocodificarEnderecosParaLeaflet(enderecosParaGeocodificar) {
+      if (!googleApiCarregada || !window.google || !window.google.maps || !window.google.maps.Geocoder || !zonaXXXBounds) {
+        console.warn("API do Google Maps, Geocoder ou limites da Zona  não estão prontos.");
+        return [];
+      }
+      if (geocodingEmProgresso) {
+        console.warn("Geocodificação já em progresso.");
+        return [];
+      }
+          geocodingEmProgresso = true;
+            if (dom.mapaGeralLeafletDiv && !mapaLeafletGeral.getContainer().querySelector('.leaflet-map-pane')) { 
+          dom.mapaGeralLeafletDiv.innerHTML = '<div class="loading-map-geral">Geocodificando endereços...</div>';
+      } else if (mapaLeafletGeral && marcadoresLeaflet.length === 0 && enderecosParaGeocodificar.length > 0) { 
+          const loadingDiv = document.createElement('div');
+          loadingDiv.className = 'loading-map-geral';
+          loadingDiv.textContent = 'Geocodificando endereços...';
+          if (!mapaLeafletGeral.getContainer().querySelector('.loading-map-geral')) {
+             mapaLeafletGeral.getContainer().prepend(loadingDiv);
+          }
+      }
+
+      const geocoderInstance = new google.maps.Geocoder();
+      const promessasGeocodificacao = enderecosParaGeocodificar.map((enderecoOriginal, index) => {
+        const enderecoProcessado = preprocessarEnderecoParaGeocoding(enderecoOriginal);
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            geocoderInstance.geocode({
+              'address': enderecoProcessado,
+              'bounds': zonaSulBounds 
+            }, (results, status) => {
+              if (status === google.maps.GeocoderStatus.OK && results[0]) {
+                const idxOriginal = enderecos.indexOf(enderecoOriginal);
+                resolve({
+                  endereco: enderecoOriginal,
+                  latLng: results[0].geometry.location,
+                  numeroOriginal: idxOriginal !== -1 ? gerarNumeracaoEnderecos(enderecos)[idxOriginal] : 'N/A'
+                });
+              } else {
+                console.warn(`Falha na geocodificação para "${enderecoProcessado}" (original: "${enderecoOriginal}"): ${status}`);
+                resolve(null);
+              }
+            });
+          }, index * 280); 
+        });
+      });
+
+      try {
+        const resultados = await Promise.all(promessasGeocodificacao);
+        return resultados.filter(r => r !== null);
+      } catch (error) {
+        console.error("Erro durante geocodificação em lote:", error);
+        return [];
+      } finally {
+        geocodingEmProgresso = false;
+                const loadingMessage = mapaLeafletGeral ? mapaLeafletGeral.getContainer().querySelector('.loading-map-geral') : null;
+        if (loadingMessage) {
+            loadingMessage.remove();
+        }
+      }
+    }
+
+       async function atualizarMapaGeralComTodosOsPontos() {
+      if (!mapaLeafletGeral) {
+        if (enderecos.length > 0 && dom.mapaGeralLeafletDiv && !dom.mapaGeralLeafletDiv.querySelector('.leaflet-map-pane')) {
+            inicializarMapaLeaflet(); 
+        }
+        return;
+      }
+
+      
+      marcadoresLeaflet.forEach(marker => marker.remove());
+      marcadoresLeaflet = [];
+
+      if (enderecos.length === 0) {
+        mapaLeafletGeral.setView([-23.682160, -46.639882], 11); 
+        const loadingMessage = mapaLeafletGeral.getContainer().querySelector('.loading-map-geral');
+        if (loadingMessage) loadingMessage.remove();
+        return;
+      }
+
+      const coordenadasComInfo = await geocodificarEnderecosParaLeaflet(enderecos);
+
+      if (coordenadasComInfo.length === 0 && enderecos.length > 0) {
+        console.warn("Não foi possível geocodificar nenhum endereço para Leaflet.");
+        mapaLeafletGeral.setView([-23.682160, -46.639882], 11);
+        return;
+      }
+
+      const bounds = L.latLngBounds();
+
+      coordenadasComInfo.forEach(info => {
+        if (info && info.latLng) {
+         
+          const numeroLimpo = info.numeroOriginal.replace(/[^0-9.]/g, ''); 
+          const numeroIcon = L.divIcon({
+            html: `<span>${numeroLimpo.replace(/^#/, '')}</span>`, 
+            className: 'custom-leaflet-div-icon',
+            iconSize: [28, 28], 
+            iconAnchor: [14, 14] 
+          });
+
+          const marker = L.marker([info.latLng.lat(), info.latLng.lng()], { icon: numeroIcon })
+            .addTo(mapaLeafletGeral)
+            .bindPopup(`<b>${info.numeroOriginal}</b>. ${info.endereco}`); // Popup mostra número com #
+          marcadoresLeaflet.push(marker);
+          bounds.extend(marker.getLatLng());
+        }
+      });
+
+      if (marcadoresLeaflet.length > 0) {
+        mapaLeafletGeral.fitBounds(bounds, { padding: [50, 50] }); 
+        if (coordenadasComInfo.length < enderecos.length) {
+            console.warn("Alguns endereços não puderam ser geocodificados para Leaflet.");
+        }
+      } else if (enderecos.length > 0) { 
+        mapaLeafletGeral.setView([-23.682160, -46.639882], 11);
+      }
+    }
+    // --- Fim das Funções Leaflet ---
+
+
+    // --- Funções Google Maps (roteiro por blocos) ---
+    // Divide a lista de endereços em blocos para a API do Google Maps
+    function dividirEmBlocosSequenciais(listaOriginal, maxPorBloco) {
+      // Pré-processa os endereços ANTES de dividir em blocos, para que a API de Direções use os endereços completos/corrigidos
+      const lista = listaOriginal.map(end => preprocessarEnderecoParaGeocoding(end));
+
+      const res = [];
+      let i = 0;
+      while (i < lista.length) {
+        let fimDoBloco;
+        if (res.length === 0) { // Primeiro bl
+          fimDoBloco = Math.min(i + maxPorBloco, lista.length);
+          res.push(lista.slice(i, fimDoBloco));
+          i = fimDoBloco;
+        } else { // Blocos subsequentes
+          const ultimoPontoAnterior = res[res.length-1][res[res.length-1].length-1];
+          const novosPontosMax = maxPorBloco -1; // -1 porque o primeiro ponto é repetido
+          fimDoBloco = Math.min(i + novosPontosMax, lista.length);
+          if (i < lista.length) { // Só adiciona novo bloco se houver mais pontos
+            res.push([ultimoPontoAnterior, ...lista.slice(i, fimDoBloco)]);
+          }
+          i = fimDoBloco;
+        }
+        if (res.length > 1) {
+            const ultimo = res[res.length-1];
+            const penultimo = res[res.length-2];
+                        if (ultimo.length === 1 && penultimo[penultimo.length-1] === ultimo[0] && i >= lista.length) {
+                 if (lista[lista.length-1] === ultimo[0]) { 
+                       res.pop();
+                 }
+            }
+        }
+      }
+      return res;
+    }
+
+    // Gera o roteiro completo, dividindo em blocos e chamando a API do Google Maps
+    async function gerarRoteiro() {
+      if (!googleApiCarregada || !window.google || !window.google.maps || !zonaSulBounds) {
+        showCustomAlert("A API do Google Maps não está carregada ou os limites regionais não estão definidos. Aguarde e tente novamente.");
+        return;
+      }
+      if (enderecos.length < 2) {
+        showCustomAlert("Adicione pelo menos 2 endereços para gerar o roteiro do Google Maps!");
+        return;
+      }
+      dom.roteiroTexto.textContent = "Calculando roteiro do Google Maps...";
+      dom.tabs.innerHTML = '';
+      dom.mapBlocos.innerHTML = '';
+      blocos = [];
+      blocosResponses = [];
+      currentBloco = 0;
+
+      const inicioIdx = parseInt(dom.inicio.value);
+      const fimIdx = parseInt(dom.fim.value);
+      let listaParaRoteiro = enderecos.slice(); 
+      let inicioManual = null;
+      let fimManual = null;
+
+      if (inicioIdx >= 0) {
+        inicioManual = listaParaRoteiro[inicioIdx];
+        if (listaParaRoteiro.length > 1 || listaParaRoteiro[0] !== inicioManual) {
+          listaParaRoteiro = listaParaRoteiro.filter((e, i) => i !== inicioIdx);
+        }
+        listaParaRoteiro.unshift(inicioManual); 
+      }
+
+      if (fimIdx >= 0) {
+        fimManual = enderecos[fimIdx]; 
+        if (!(listaParaRoteiro.length === 1 && listaParaRoteiro[0] === fimManual)) { 
+            const tempLista = [];
+            for(let k=0; k < listaParaRoteiro.length; k++){
+                if(listaParaRoteiro[k] === fimManual){
+                    if(inicioManual === fimManual && k===0) tempLista.push(listaParaRoteiro[k]); 
+                } else {
+                    tempLista.push(listaParaRoteiro[k]);
+                }
+            }
+            listaParaRoteiro = tempLista;
+                        if (listaParaRoteiro.length === 0 || listaParaRoteiro[listaParaRoteiro.length - 1] !== fimManual) {
+                listaParaRoteiro.push(fimManual);
+            }
+        }
+      }
+            listaParaRoteiro = listaParaRoteiro.filter((item, index, self) => index === 0 || item !== self[index - 1]);
+
+      if (listaParaRoteiro.length < 2) {
+          showCustomAlert("São necessários pelo menos 2 endereços distintos para formar um roteiro após seleção de início/fim.");
+          dom.roteiroTexto.textContent = "Não foi possível gerar o roteiro. Verifique os endereços e as seleções de início/fim.";
+          return;
+      }
+           blocos = dividirEmBlocosSequenciais(listaParaRoteiro, MAX_POR_BLOCO);
+
+      if (blocos.length === 0 || (blocos.length === 1 && blocos[0].length < 2)) {
+        dom.roteiroTexto.textContent = "Não foi possível dividir em blocos válidos. Verifique os endereços.";
+        return;
+      }
+
+      
+      for (let i = 0; i < blocos.length; i++) {
+        const btn = document.createElement("button");
+        btn.innerText = `Bloco ${i + 1}`;
+        btn.className = i === 0 ? "active" : "";
+        btn.onclick = () => mostrarBloco(i);
+        dom.tabs.appendChild(btn);
+        const div = document.createElement("div");
+        div.id = `map-bloco-${i}`;
+        div.className = "map-bloco" + (i === 0 ? " active" : "");
+        dom.mapBlocos.appendChild(div);
+      }
+      await gerarTodosBlocos(); 
+    }
+
+    
+    async function gerarTodosBlocos() {
+      for (let i = 0; i < blocos.length; i++) {
+        await gerarRotaBloco(i);
+      }
+      exibirRoteiroTextoCompleto(); 
+    }
+
+    
+    function gerarRotaBloco(i) {
+      return new Promise((resolve) => {
+        const blocoCru = blocos[i]; 
+        if (!googleApiCarregada || !window.google || !window.google.maps) return resolve();
+        if (blocoCru.length < 2) { 
+            console.warn(`Bloco ${i+1} inválido (menos de 2 pontos).`);
+            blocosResponses[i] = null;
+            const mapDiv = document.getElementById(`map-bloco-${i}`);
+            if (mapDiv) mapDiv.innerHTML = `<p style="padding:20px; color:#aaa;">Bloco ${i+1} inválido (menos de 2 pontos).</p>`;
+            return resolve();
+        }
+        const map = new google.maps.Map(document.getElementById(`map-bloco-${i}`), {
+          center: { lat: -23.5505, lng: -46.6333 }, zoom: 12 
+        });
+        const directionsService = new google.maps.DirectionsService();
+        const directionsRenderer = new google.maps.DirectionsRenderer();
+        directionsRenderer.setMap(map);
+        const origem = blocoCru[0];
+        const destino = blocoCru[blocoCru.length - 1];
+        const intermediarios = blocoCru.slice(1, blocoCru.length - 1);
+        const waypoints = intermediarios.map(end => ({ location: end, stopover: true }));
+
+        directionsService.route({
+          origin: origem, destination: destino, waypoints: waypoints,
+          optimizeWaypoints: true, 
+          travelMode: google.maps.TravelMode.DRIVING,
+          region: 'BR' 
+        }, (response, status) => {
+          if (status === "OK") {
+            directionsRenderer.setDirections(response);
+         
+            blocosResponses[i] = { response, origem, destino, waypointsReais: blocoCru.slice() };
+          } else {
+            blocosResponses[i] = null;
+            document.getElementById(`map-bloco-${i}`).innerHTML = `<p style="padding:20px; color:red;">Erro ao gerar rota para Bloco ${i+1}: ${status}</p>`;
+            console.error(`Erro ao gerar rota para Bloco ${i+1}: ${status}`, response);
+          }
+          resolve();
+        });
+      });
+    }
+
+        function mostrarBloco(i) {
+      currentBloco = i;
+      [...dom.mapBlocos.children].forEach((div, idx) => {
+        div.className = "map-bloco" + (idx === i ? " active" : "");
+      });
+      [...dom.tabs.children].forEach((btn, idx) => {
+        btn.className = idx === i ? "active" : "";
+      });
+    }
+
+    
+    function exibirRoteiroTextoCompleto() {
+        const numerosGlobais = gerarNumeracaoEnderecos(enderecos); 
+
+                function getEnderecoOriginal(enderecoProcessadoDaRota) {
+            for (const original of enderecos) {
+                if (preprocessarEnderecoParaGeocoding(original) === enderecoProcessadoDaRota) {
+                    return original;
+                }
+            }
+            
+            if (enderecos.includes(enderecoProcessadoDaRota)) return enderecoProcessadoDaRota;
+            return enderecoProcessadoDaRota; // Fallback
+        }
+
+        function getNumeroGlobal(enderecoDaRota) {
+            const originalCorrespondente = getEnderecoOriginal(enderecoDaRota);
+            const index = enderecos.indexOf(originalCorrespondente);
+            return index !== -1 ? numerosGlobais[index] : `(#?)`;
+        }
+
+        let textoRoteiro = "";
+        let distanciaTotal = 0;
+        let duracaoTotal = 0;
+
+        for (let i = 0; i < blocos.length; i++) {
+            const blocoResp = blocosResponses[i];
+            if (!blocoResp || !blocoResp.response) {
+                textoRoteiro += `🟦 BLOCO ${i + 1}: Erro ou não gerado.\n\n`;
+                continue;
+            }
+            const { response, waypointsReais } = blocoResp; 
+            const route = response.routes[0];
+            textoRoteiro += `🟦 BLOCO ${i + 1}\n`;
+
+           
+            const ordemOtimizadaDoBloco = [waypointsReais[0]]; 
+            if (route.waypoint_order && route.waypoint_order.length > 0) {
+                const intermediariosDoBloco = waypointsReais.slice(1, waypointsReais.length -1);
+                for (const pos of route.waypoint_order) {
+                    ordemOtimizadaDoBloco.push(intermediariosDoBloco[pos]);
+                }
+            }
+            // Destino (pré-processado)
+            if (waypointsReais.length > 1 && (ordemOtimizadaDoBloco.length === 0 || ordemOtimizadaDoBloco[ordemOtimizadaDoBloco.length-1] !== waypointsReais[waypointsReais.length-1])) {
+                 ordemOtimizadaDoBloco.push(waypointsReais[waypointsReais.length-1]);
+            } else if (waypointsReais.length === 1 && ordemOtimizadaDoBloco.length === 0) { 
+                 ordemOtimizadaDoBloco.push(waypointsReais[0]);
+            }
+
+                if (i === 0) { 
+                textoRoteiro += `${getNumeroGlobal(ordemOtimizadaDoBloco[0])}. ${getEnderecoOriginal(ordemOtimizadaDoBloco[0])}\n`;
+            }
+           
+            for (let j = 1; j < ordemOtimizadaDoBloco.length; j++) {
+                if (i > 0 && j === 0 && ordemOtimizadaDoBloco[j] === blocosResponses[i-1]?.waypointsReais.slice(-1)[0]) {
+                continue;
+                }
+                 textoRoteiro += `${getNumeroGlobal(ordemOtimizadaDoBloco[j])}. ${getEnderecoOriginal(ordemOtimizadaDoBloco[j])}\n`;
+            }
+            textoRoteiro += `\n`;
+
+            
+            if (route.legs && route.legs.length > 0) {
+                let somaDistBloco = 0, somaDurBloco = 0;
+                route.legs.forEach(leg => {
+                    if (leg.distance && leg.distance.value) somaDistBloco += leg.distance.value;
+                    if (leg.duration && leg.duration.value) somaDurBloco += leg.duration.value;
+                });
+                distanciaTotal += somaDistBloco;
+                duracaoTotal += somaDurBloco;
+                textoRoteiro += `Distância bloco: ${(somaDistBloco/1000).toFixed(2)} km, Tempo: ${(somaDurBloco/60).toFixed(0)} min\n\n`;
+            }
+        }
+        textoRoteiro += `-------------------------------------\n`;
+        textoRoteiro += `Distância Total Estimada: ${(distanciaTotal/1000).toFixed(2)} km\n`;
+        textoRoteiro += `Tempo Total Estimado: ${(duracaoTotal/3600).toFixed(2)}h (${(duracaoTotal/60).toFixed(0)} min)\n`;
+        dom.roteiroTexto.textContent = textoRoteiro.trim();
+    }
+     async function copiarRoteiro() {
+      const texto = dom.roteiroTexto.textContent;
+      if (!texto || texto === "Calculando roteiro..." || texto === "Calculando roteiro do Google Maps...") {
+        showCustomAlert("Nenhum roteiro para copiar!");
+        return;
+      }
+      const textarea = document.createElement('textarea');
+      textarea.value = texto;
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy'); 
+        showCustomAlert("Roteiro copiado para a área de transferência!");
+      } catch (err) {
+        console.error("Erro ao copiar (execCommand):", err);
+        try {
+            await navigator.clipboard.writeText(texto); 
+            showCustomAlert("Roteiro copiado para a área de transferência! (navigator.clipboard)");
+        } catch (errCb) {
+            console.error("Erro ao copiar (navigator.clipboard):", errCb);
+            showCustomAlert("Erro ao copiar roteiro. Consulte o console para detalhes.");
+        }
+      }
+      document.body.removeChild(textarea);
+    }
+    function initMap() {
+      console.log("Google Maps API carregada.");
+      googleApiCarregada = true;
+
+      // Define os limites geográficos para priorizar a Sua região
+      const southWest = new google.maps.LatLng(-00.000, -00.000); // Ajuste conforme necessário
+      const northEast = new google.maps.LatLng(-00.000, -00.000); // Ajuste conforme necessário
+      zonaSulBounds = new google.maps.LatLngBounds(southWest, northEast);
+
+      if (mapaLeafletGeral && enderecos.length > 0) {
+        atualizarMapaGeralComTodosOsPontos();
+      } else if (!mapaLeafletGeral && enderecos.length > 0 && dom.mapaGeralLeafletDiv) {
+             inicializarMapaLeaflet();
+      }
+    }
+    window.initMap = initMap; 
+     function carregarGoogleMaps() {
+      if (window.google && window.google.maps) { 
+        if (!googleApiCarregada) initMap();
+        return;
+      }
+      const script = document.createElement('script');
+      // IMPORTANTE: chaves necessarias: Geocoding API, Directions API, Maps JavaScript API.
+      script.src = //sua chave aqui;
+      script.async = true;
+      script.defer = true;
+      script.onerror = () => {
+        console.error("Erro ao carregar Google Maps. Verifique sua conexão e a chave da API.");
+        dom.mapBlocos.innerHTML = '<p style="color:red">Erro ao carregar o Google Maps.</p>';
+      };
+      document.head.appendChild(script);
+    }
+
+    function inicializarReconhecimentoDeVoz() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            showCustomAlert("Seu navegador não suporta o reconhecimento de voz. Tente o Chrome ou Edge.");
+            if(dom.btnFalarEndereco) {
+                dom.btnFalarEndereco.disabled = true;
+                dom.btnFalarEndereco.title = "Reconhecimento de voz não suportado";
+            }
+            return;
+        }
+
+        speechRecognition = new SpeechRecognition();
+        speechRecognition.lang = 'pt-BR';
+        speechRecognition.interimResults = false; 
+        speechRecognition.maxAlternatives = 1;
+
+        speechRecognition.onstart = () => {
+            isRecognizing = true;
+            dom.btnFalarEndereco.textContent = '🎙️ Ouvindo...';
+            dom.btnFalarEndereco.classList.add('ouvindo');
+            console.log("Reconhecimento de voz iniciado.");
+        };
+
+        speechRecognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            dom.novoEndereco.value = transcript; 
+            console.log("Endereço falado:", transcript);
+          
+        };
+
+        speechRecognition.onspeechend = () => {
+            speechRecognition.stop(); 
+            console.log("Fala detectada, parando reconhecimento.");
+        };
+
+        speechRecognition.onend = () => {
+            isRecognizing = false;
+            dom.btnFalarEndereco.textContent = '🎤';
+            dom.btnFalarEndereco.classList.remove('ouvindo');
+            console.log("Reconhecimento de voz finalizado.");
+        };
+
+        speechRecognition.onerror = (event) => {
+            isRecognizing = false;
+            dom.btnFalarEndereco.textContent = '🎤';
+            dom.btnFalarEndereco.classList.remove('ouvindo');
+            console.error("Erro no reconhecimento de voz:", event.error);
+            let mensagemErro = "Ocorreu um erro no reconhecimento de voz.";
+            if (event.error === 'no-speech') {
+                mensagemErro = "Nenhuma fala foi detectada. Tente novamente.";
+            } else if (event.error === 'audio-capture') {
+                mensagemErro = "Problema na captura de áudio. Verifique seu microfone.";
+            } else if (event.error === 'not-allowed') {
+                mensagemErro = "Permissão para usar o microfone foi negada ou não concedida.";
+            } else if (event.error === 'network') {
+                mensagemErro = "Erro de rede durante o reconhecimento de voz. Verifique sua conexão.";
+            }
+            showCustomAlert(mensagemErro);
+        };
+    }
+
+    function toggleReconhecimentoDeVoz() {
+        if (!speechRecognition) {
+            showCustomAlert("Funcionalidade de voz não inicializada corretamente.");
+            return;
+        }
+        if (isRecognizing) {
+            speechRecognition.stop();
+        } else {
+            try {
+                    navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(() => {
+                        speechRecognition.start();
+                    })
+                    .catch(err => {
+                        console.error("Erro ao obter permissão do microfone:", err);
+                        showCustomAlert("É necessário permitir o acesso ao microfone para usar o reconhecimento de voz.");
+                        isRecognizing = false;
+                        dom.btnFalarEndereco.textContent = '🎤';
+                        dom.btnFalarEndereco.classList.remove('ouvindo');
+                    });
+            } catch (e) {
+                console.error("Erro ao tentar iniciar reconhecimento:", e);
+                isRecognizing = false;
+                dom.btnFalarEndereco.textContent = '🎤';
+                dom.btnFalarEndereco.classList.remove('ouvindo');
+                showCustomAlert("Não foi possível iniciar o reconhecimento de voz. Tente novamente.");
+            }
+        }
+    }
+      function inicializar() {
+      dom.btnAdicionar.addEventListener('click', adicionarEndereco);
+      dom.btnAdicionarVarios.addEventListener('click', adicionarVariosEnderecos);
+      dom.btnImportarVarios.addEventListener('click', importarVariosEnderecos);
+      dom.btnFecharImportarVarios.addEventListener('click', fecharImportarVarios);
+      dom.btnLimparEnderecos.addEventListener('click', async () => await limparEnderecos());
+      dom.btnGerarRoteiro.addEventListener('click', async () => await gerarRoteiro());
+      dom.btnLimparTudo.addEventListener('click', async () => await limparTudo());
+      dom.btnCopiar.addEventListener('click', async () => await copiarRoteiro());
+
+      if (dom.btnFalarEndereco) {
+        dom.btnFalarEndereco.addEventListener('click', toggleReconhecimentoDeVoz);
+      } else {
+        console.warn("Botão de falar endereço não encontrado no DOM.");
+      }
+
+      
+      inicializarMapaLeaflet();
+      inicializarReconhecimentoDeVoz(); 
+      carregarDoLocalStorage();          
+      carregarGoogleMaps();              
+    }
+
+    document.addEventListener('DOMContentLoaded', inicializar);
+  </script>
+</body>
+</html>
