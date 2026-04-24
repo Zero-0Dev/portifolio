@@ -67,10 +67,11 @@ nav.scrolled{background:rgba(6,7,10,.92);box-shadow:0 4px 30px rgba(0,0,0,.5)}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
 .hero h1{font-size:clamp(2.8rem,6vw,5rem);margin-bottom:1.2rem;letter-spacing:-.03em}
 .hero p{font-size:1.15rem;color:var(--text-secondary);max-width:520px;margin-bottom:2.5rem}
-.hero-avatar{width:280px;height:280px;border-radius:50%;overflow:hidden;border:3px solid var(--glass-border);box-shadow:var(--glow);position:relative}
-.hero-avatar img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
-.hero-avatar:hover img{transform:scale(1.08)}
-.hero-avatar::after{content:'';position:absolute;inset:0;border-radius:50%;background:linear-gradient(135deg,rgba(99,102,241,.15),transparent 60%);pointer-events:none}
+.hero-monogram{width:240px;height:240px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center}
+.monogram-text{font-family:'Outfit',sans-serif;font-size:5rem;font-weight:900;background:linear-gradient(135deg,var(--accent-1),var(--accent-2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;z-index:2;user-select:none;letter-spacing:-.05em}
+.monogram-ring{position:absolute;inset:0;border-radius:50%;border:2px solid transparent;border-top-color:var(--accent-1);border-right-color:var(--accent-2);animation:spinRing 8s linear infinite}
+.monogram-ring.ring-2{inset:12px;border-top-color:var(--accent-2);border-right-color:var(--accent-1);animation-duration:12s;animation-direction:reverse;opacity:.5}
+@keyframes spinRing{to{transform:rotate(360deg)}}
 
 /* Typing cursor */
 .typing-cursor{display:inline-block;width:3px;height:1em;background:var(--accent-1);margin-left:4px;animation:blink 1s step-end infinite;vertical-align:text-bottom}
@@ -176,7 +177,7 @@ footer{text-align:center;padding:2.5rem 0;border-top:1px solid var(--glass-borde
 /* ═══════════ RESPONSIVE ═══════════ */
 @media(max-width:900px){
   .hero-inner{grid-template-columns:1fr;text-align:center}
-  .hero-avatar{margin:0 auto 2rem}
+  .hero-monogram{margin:0 auto 2rem}
   .hero-badge{margin:0 auto 1.6rem}
   .hero p{margin:0 auto 2.5rem}
   .btn-group{justify-content:center}
@@ -188,7 +189,8 @@ footer{text-align:center;padding:2.5rem 0;border-top:1px solid var(--glass-borde
   .nav-links.open{right:0}
   .hamburger{display:flex}
   .hero h1{font-size:2.5rem}
-  .hero-avatar{width:200px;height:200px}
+  .hero-monogram{width:160px;height:160px}
+  .monogram-text{font-size:3.5rem}
   section{padding:4rem 0}
   .glass-card{padding:1.8rem}
   .btn-group{flex-direction:column;align-items:center}
